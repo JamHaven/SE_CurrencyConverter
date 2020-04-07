@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29905.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyExchangeServiceWCF", "CurrencyExchangeServiceWCF\CurrencyExchangeServiceWCF.csproj", "{13D95C7C-894F-4FE5-A4BF-BCE66EB9D68D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyExchangeServiceWCFTests", "CurrencyExchangeServiceWCFTests\CurrencyExchangeServiceWCFTests.csproj", "{42647D44-1ABD-4715-866E-8D086587416C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebServiceClient", "WebServiceClient\WebServiceClient.csproj", "{7A2683CD-AD72-48F9-B04F-2664DCF8CA17}"
+	ProjectSection(ProjectDependencies) = postProject
+		{13D95C7C-894F-4FE5-A4BF-BCE66EB9D68D} = {13D95C7C-894F-4FE5-A4BF-BCE66EB9D68D}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{13D95C7C-894F-4FE5-A4BF-BCE66EB9D68D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13D95C7C-894F-4FE5-A4BF-BCE66EB9D68D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13D95C7C-894F-4FE5-A4BF-BCE66EB9D68D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13D95C7C-894F-4FE5-A4BF-BCE66EB9D68D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42647D44-1ABD-4715-866E-8D086587416C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42647D44-1ABD-4715-866E-8D086587416C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42647D44-1ABD-4715-866E-8D086587416C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42647D44-1ABD-4715-866E-8D086587416C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A2683CD-AD72-48F9-B04F-2664DCF8CA17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A2683CD-AD72-48F9-B04F-2664DCF8CA17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A2683CD-AD72-48F9-B04F-2664DCF8CA17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A2683CD-AD72-48F9-B04F-2664DCF8CA17}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C1418C1A-A856-4D59-BA6F-1ED3DFC6AF02}
+	EndGlobalSection
+EndGlobal
