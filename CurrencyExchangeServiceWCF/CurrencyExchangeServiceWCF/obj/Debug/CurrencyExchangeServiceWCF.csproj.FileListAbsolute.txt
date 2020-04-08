@@ -29,8 +29,8 @@ C:\DEV\FH\SE_CurrencyConverter\CurrencyExchangeServiceWCF\CurrencyExchangeServic
 C:\DEV\FH\SE_CurrencyConverter\CurrencyExchangeServiceWCF\CurrencyExchangeServiceWCF\bin\CurrencyExchangeServiceWCF.pdb
 C:\DEV\FH\SE_CurrencyConverter\CurrencyExchangeServiceWCF\CurrencyExchangeServiceWCF\bin\Newtonsoft.Json.dll
 C:\DEV\FH\SE_CurrencyConverter\CurrencyExchangeServiceWCF\CurrencyExchangeServiceWCF\bin\Newtonsoft.Json.xml
+C:\DEV\FH\SE_CurrencyConverter\CurrencyExchangeServiceWCF\CurrencyExchangeServiceWCF\obj\Debug\CurrencyExchangeServiceWCF.csprojAssemblyReference.cache
 C:\DEV\FH\SE_CurrencyConverter\CurrencyExchangeServiceWCF\CurrencyExchangeServiceWCF\obj\Debug\CurrencyExchangeServiceWCF.csproj.CoreCompileInputs.cache
 C:\DEV\FH\SE_CurrencyConverter\CurrencyExchangeServiceWCF\CurrencyExchangeServiceWCF\obj\Debug\CurrencyExchangeServiceWCF.csproj.CopyComplete
 C:\DEV\FH\SE_CurrencyConverter\CurrencyExchangeServiceWCF\CurrencyExchangeServiceWCF\obj\Debug\CurrencyExchangeServiceWCF.dll
 C:\DEV\FH\SE_CurrencyConverter\CurrencyExchangeServiceWCF\CurrencyExchangeServiceWCF\obj\Debug\CurrencyExchangeServiceWCF.pdb
-C:\DEV\FH\SE_CurrencyConverter\CurrencyExchangeServiceWCF\CurrencyExchangeServiceWCF\obj\Debug\CurrencyExchangeServiceWCF.csprojAssemblyReference.cache

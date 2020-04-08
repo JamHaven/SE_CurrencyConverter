@@ -14,10 +14,12 @@ namespace CurrencyExchangeServiceWCF
 
      
         [OperationContract]
-        //[WebGet(UriTemplate ="ConvertCurrency")]
+        
         string ConvertCurrency(String toCurrency, string value);
 
+
         [OperationContract]
+        
         List<string> GetCurrencyCodes();
     }
 
