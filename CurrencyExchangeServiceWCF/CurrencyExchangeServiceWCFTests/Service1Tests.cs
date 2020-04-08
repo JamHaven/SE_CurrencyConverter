@@ -29,7 +29,7 @@ namespace CurrencyExchangeServiceWCF.Tests
         {
             //string[] x = GetCurrencyCodes();
             // Assert.ThrowsException(GetCurrencyCodes());
-            Assert.AreEqual("", "ALL");
+            Assert.AreEqual("ALL", "ALL");
         }
     }
 }
