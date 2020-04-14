@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
-using System.ServiceModel.Web;
-using System.Text;
 
 namespace CurrencyExchangeServiceWCF
 {
@@ -28,29 +25,13 @@ namespace CurrencyExchangeServiceWCF
     [DataContract]
     public class CompositeType
     {
-        bool boolValue = true;
-        string stringValue = "Hello ";
-        double doubleValue = 0.0;
+        [DataMember]
+        public bool BoolValue { get; set; } = true;
 
         [DataMember]
-        public bool BoolValue
-        {
-            get { return boolValue; }
-            set { boolValue = value; }
-        }
+        public double DoubleValue { get; set; } = 0.0;
 
         [DataMember]
-        public double DoubleValue
-        {
-            get { return doubleValue; }
-            set { doubleValue = value; }
-        }
-
-        [DataMember]
-        public string StringValue
-        {
-            get { return stringValue; }
-            set { stringValue = value; }
-        }
+        public string StringValue { get; set; } = "Hello ";
     }
 }

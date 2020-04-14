@@ -17,7 +17,6 @@ namespace CurrencyExchangeServiceWCF
 
             if (String.IsNullOrEmpty(value) || String.IsNullOrEmpty(toCurrency))
             {
-                //throw new SoapException("Wert konnte nicht umgerechnet werden.", new System.Xml.XmlQualifiedName("InvalidParameter", this.ToString()));
                 return "Input cannot be NULL!";
             }
             toCurrency = toCurrency.ToUpper();
@@ -58,8 +57,6 @@ namespace CurrencyExchangeServiceWCF
             catch (Exception)
             {
                 return "Input value has invalid number format.";
-                //SoapException soapException = new SoapException("Wert konnte nicht umgerechnet werden.", SoapException.ClientFaultCode, "");
-                //throw soapException;
             }
             if (toCurrency.Equals("USD"))
             {

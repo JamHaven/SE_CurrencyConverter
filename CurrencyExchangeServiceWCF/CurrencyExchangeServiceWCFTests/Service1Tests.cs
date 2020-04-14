@@ -1,10 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CurrencyExchangeServiceWCF;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CurrencyExchangeServiceWCF.Tests
 {
@@ -14,21 +8,17 @@ namespace CurrencyExchangeServiceWCF.Tests
         [TestMethod()]
         public void TestConvertCurrencyTest()
         {
-            //Assert();
+            Assert.Equals("","");
         }
 
         [TestMethod()]
         public void TestGetCurrencyCodes()
         {
-            //string[] x = GetCurrencyCodes();
-           // Assert.ThrowsException(GetCurrencyCodes());
             Assert.AreEqual("ALL","ALL");
         }
         [TestMethod()]
         public void TestGetActualConversionRate()
         {
-            //string[] x = GetCurrencyCodes();
-            // Assert.ThrowsException(GetCurrencyCodes());
             Assert.AreEqual("ALL", "ALL");
         }
     }
