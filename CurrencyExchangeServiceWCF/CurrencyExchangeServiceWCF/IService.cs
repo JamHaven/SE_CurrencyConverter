@@ -1,37 +1,74 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using System.ServiceModel.Web;
+using System.Text;
 
 namespace CurrencyExchangeServiceWCF
 {
     [ServiceContract]
-    public interface IService
+    public interface IService1
     {
 
-     
         [OperationContract]
-        
-        string ConvertCurrency(String toCurrency, string value);
-
+        Response<string> ConvertCurrency(ConvertCurrenyRequest req);
 
         [OperationContract]
-        
-        List<string> GetCurrencyCodes();
+        Response<List<string>> GetCurrencyCodes(GetCurrencyCodesRequest req);
+
+    }
+ 
+    [MessageContract]
+    public class ConvertCurrenyRequest 
+    {
+        [MessageBodyMember]
+        public AuthHeader autHeader { get; set; }
+        [MessageBodyMember]
+        public string toCurrency { get; set; }
+        [MessageBodyMember]
+        public string ccValue { get; set; }
+    }
+    [MessageContract]
+    public class GetCurrencyCodesRequest 
+    {
+        [MessageBodyMember]
+        public AuthHeader autHeader { get; set; }
+    }
+    
+    /**
+     * The return value can use for e
+     */
+    [MessageContract]
+    public class Response<T>
+    {       
+        [MessageBodyMember]
+        public T ReturnValue;
     }
 
-
-    // Use a data contract as illustrated in the sample below to add composite types to service operations.
+    /**
+     * Date model for the authentication header 
+     */
     [DataContract]
-    public class CompositeType
+    public class AuthHeader
     {
-        [DataMember]
-        public bool BoolValue { get; set; } = true;
+        public string username;
+        public string password;
 
         [DataMember]
-        public double DoubleValue { get; set; } = 0.0;
+        public string Username
+        {
+            get { return username; }
+            set { username = value; }
+        }
 
         [DataMember]
-        public string StringValue { get; set; } = "Hello ";
-    }
+        public string Password
+        {
+            get { return password; }
+            set { password = value; }
+        }
+    } 
 }
+    
