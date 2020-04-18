@@ -9,17 +9,17 @@ namespace CurrencyExchangeServiceWCF
     //souce:        https://www.c-sharpcorner.com/blogs/message-contract-and-its-implementation
     //              https://www.c-sharpcorner.com/UploadFile/788083/how-to-implement-message-contract-in-wcf/
     //encription :  https://docs.microsoft.com/en-us/dotnet/framework/wcf/feature-details/using-message-contracts
-    public class Service1 : IService1
+    public class Service : IService
     {
         SoapException soapException ;
         public Response<string> ConvertCurrency(ConvertCurrenyRequest req)
         {
             try
             {
-                Response<string> r = new Response<string>();
+                Response<string> serviceResponse = new Response<string>();
                 if (!req.autHeader.password.Equals("pa$$w0rd") || !req.autHeader.username.Equals("Admin")){
-                    r.ReturnValue = "authentication not valid"; 
-                    return r;
+                    serviceResponse.ReturnValue = "authentication not valid"; 
+                    return serviceResponse;
                 }
                 String toCurrency = req.toCurrency;
                 String value = req.ccValue;
@@ -32,8 +32,8 @@ namespace CurrencyExchangeServiceWCF
 
                 if (String.IsNullOrEmpty(value) || String.IsNullOrEmpty(toCurrency))
                 {
-                    r.ReturnValue = "Input cannot be NULL!";
-                    return r;
+                    serviceResponse.ReturnValue = "Input cannot be NULL!";
+                    return serviceResponse;
                 }
                 toCurrency = toCurrency.ToUpper();
 
@@ -43,17 +43,14 @@ namespace CurrencyExchangeServiceWCF
 
                 if (!isCurrencyValid || !isValueValid)
                 {
-                    r.ReturnValue = "Input cannot be NULL!";
-                    return r;
+                    serviceResponse.ReturnValue = "Input cannot not valid!";
+                    return serviceResponse;
                 }
-
-                double ConversionRateDouble;
-                string ConversionRateString;
             
                 if (toCurrency.Equals("USD"))
                 {
-                    r.ReturnValue = value;
-                    return r;
+                    serviceResponse.ReturnValue = value;
+                    return serviceResponse;
                 }
                 if (toCurrency.Equals("EUR"))
                     toCurrency = "USD";
@@ -69,20 +66,20 @@ namespace CurrencyExchangeServiceWCF
                     soapException = new SoapException("Wert darf nicht 0 sein.", SoapException.ClientFaultCode, "");
                     throw soapException;
                 }
-           
-                ConversionRateString = GetActualConversionRate(toCurrency);
-                ConversionRateDouble = Convert.ToDouble(ConversionRateString);
+
+                string conversionRateString = GetActualConversionRate(toCurrency);
+                double conversionRateDouble = Convert.ToDouble(conversionRateString);
            
                 if (toCurrency.Equals("USD")) 
                 {
-                    value = (Convert.ToDouble(value) / ConversionRateDouble).ToString();
+                    value = (Convert.ToDouble(value) / conversionRateDouble).ToString();
                 }
                 else
                 {
-                    value = (Convert.ToDouble(value) * ConversionRateDouble).ToString();
-                }           
-                r.ReturnValue = value;         
-                return r;
+                    value = (Convert.ToDouble(value) * conversionRateDouble).ToString();
+                }
+                serviceResponse.ReturnValue = value;         
+                return serviceResponse;
             }
             catch (Exception)
             {
@@ -124,23 +121,23 @@ namespace CurrencyExchangeServiceWCF
 
         public Response<List<string>> GetCurrencyCodes(GetCurrencyCodesRequest req)
         {
-            Response<List<string>> r = new Response<List<string>>();
+            Response<List<string>> serviceResponse = new Response<List<string>>();
             if (!req.autHeader.password.Equals("pa$$w0rd") || !req.autHeader.username.Equals("Admin"))
             {
-                r.ReturnValue = new List<string> {"authentication not valid"};
-                return r;
+                serviceResponse.ReturnValue = new List<string> {"authentication not valid"};
+                return serviceResponse;
             }
-            r.ReturnValue = GetCurrencyCodes(); //delegate
-            return r;
+            serviceResponse.ReturnValue = GetCurrencyCodes(); //delegate
+            return serviceResponse;
         }
 
         private List<string> GetCurrencyCodes()
         {
             try
             {
-                List<string> CurrencyList = new List<string>();
-                string Url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
-                XmlTextReader reader = new XmlTextReader(Url);
+                List<string> currencyList = new List<string>();
+                string url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+                XmlTextReader reader = new XmlTextReader(url);
                 while (reader.Read())
                 {
                     switch (reader.NodeType)
@@ -150,7 +147,7 @@ namespace CurrencyExchangeServiceWCF
                             {// Read the attributes.
                                 if (reader.Name.Equals("currency"))
                                 {
-                                    CurrencyList.Add(reader.Value);
+                                    currencyList.Add(reader.Value);
                                 }
                             }
                             break;
@@ -160,7 +157,7 @@ namespace CurrencyExchangeServiceWCF
                             break;
                     }
                 }
-                return CurrencyList;
+                return currencyList;
             }
             catch (Exception)
             {
