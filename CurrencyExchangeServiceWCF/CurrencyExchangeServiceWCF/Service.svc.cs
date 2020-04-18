@@ -28,8 +28,6 @@ namespace CurrencyExchangeServiceWCF
                 string currencyInputPattern = @"^[a-zA-Z]{3}$";
                 string valueInputPattern = @"^[,.0-9]*$";
 
-
-
                 if (String.IsNullOrEmpty(value) || String.IsNullOrEmpty(toCurrency))
                 {
                     serviceResponse.ReturnValue = "Input cannot be NULL!";
@@ -43,7 +41,7 @@ namespace CurrencyExchangeServiceWCF
 
                 if (!isCurrencyValid || !isValueValid)
                 {
-                    serviceResponse.ReturnValue = "Input cannot not valid!";
+                    serviceResponse.ReturnValue = "Input is not valid!";
                     return serviceResponse;
                 }
             
@@ -88,7 +86,7 @@ namespace CurrencyExchangeServiceWCF
             }
         }
 
-        private string GetActualConversionRate(string Currency)
+        private string GetActualConversionRate(string currency)
         {
             string Url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
             XmlTextReader reader = new XmlTextReader(Url);
@@ -101,7 +99,7 @@ namespace CurrencyExchangeServiceWCF
 
                         while (reader.MoveToNextAttribute())
                         {// Read the attributes.
-                            if (reader.Value.Equals(Currency))
+                            if (reader.Value.Equals(currency))
                             {
                                 reader.MoveToAttribute("rate");
                                 rate = reader.Value;
