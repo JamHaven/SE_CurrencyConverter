@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
+using System.ServiceModel.Web;
+using System.Text;
 
 namespace CurrencyExchangeServiceWCF
 {
@@ -9,29 +12,63 @@ namespace CurrencyExchangeServiceWCF
     public interface IService
     {
 
-     
         [OperationContract]
-        
-        string ConvertCurrency(String toCurrency, string value);
-
+        Response<string> ConvertCurrency(ConvertCurrenyRequest req);
 
         [OperationContract]
-        
-        List<string> GetCurrencyCodes();
+        Response<List<string>> GetCurrencyCodes(GetCurrencyCodesRequest req);
+
     }
-
-
-    // Use a data contract as illustrated in the sample below to add composite types to service operations.
-    [DataContract]
-    public class CompositeType
+ 
+    [MessageContract]
+    public class ConvertCurrenyRequest 
     {
-        [DataMember]
-        public bool BoolValue { get; set; } = true;
-
-        [DataMember]
-        public double DoubleValue { get; set; } = 0.0;
-
-        [DataMember]
-        public string StringValue { get; set; } = "Hello ";
+        [MessageBodyMember]
+        public AuthHeader autHeader { get; set; }
+        [MessageBodyMember]
+        public string toCurrency { get; set; }
+        [MessageBodyMember]
+        public string ccValue { get; set; }
     }
+    [MessageContract]
+    public class GetCurrencyCodesRequest 
+    {
+        [MessageBodyMember]
+        public AuthHeader autHeader { get; set; }
+    }
+    
+    /**
+     * The return value can use for e
+     */
+    [MessageContract]
+    public class Response<T>
+    {       
+        [MessageBodyMember]
+        public T ReturnValue;
+    }
+
+    /**
+     * Date model for the authentication header 
+     */
+    [DataContract]
+    public class AuthHeader
+    {
+        public string username;
+        public string password;
+
+        [DataMember]
+        public string Username
+        {
+            get { return username; }
+            set { username = value; }
+        }
+
+        [DataMember]
+        public string Password
+        {
+            get { return password; }
+            set { password = value; }
+        }
+    } 
 }
+    
