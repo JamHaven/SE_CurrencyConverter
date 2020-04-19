@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Security.Authentication;
 using System.Web.Services.Protocols;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -13,14 +14,14 @@ namespace CurrencyExchangeServiceWCF
     public class Service : IService
     {
         SoapException soapException ;
-        public Response<string> ConvertCurrency(ConvertCurrenyRequest req)
+        public Response<float> ConvertCurrency(ConvertCurrenyRequest req)
         {
+            Response<float> serviceResponse = new Response<float>();
             try
             {
-                Response<string> serviceResponse = new Response<string>();
+                
                 if (!req.autHeader.password.Equals("pa$$w0rd") || !req.autHeader.username.Equals("Admin")){
-                    serviceResponse.ReturnValue = "authentication not valid"; 
-                    return serviceResponse;
+                    throw new AuthenticationException("authentication not valid"); 
                 }
                 String toCurrency = req.toCurrency;
                 String fromCurrency = req.fromCurrency;
@@ -31,8 +32,7 @@ namespace CurrencyExchangeServiceWCF
 
                 if (String.IsNullOrEmpty(toCurrency))
                 {
-                    serviceResponse.ReturnValue = "Input cannot be NULL!";
-                    return serviceResponse;
+                    throw new SoapException();
                 }
                 toCurrency = toCurrency.ToUpper();
 
@@ -41,17 +41,18 @@ namespace CurrencyExchangeServiceWCF
 
                 if (!isCurrencyValid)
                 {
-                    serviceResponse.ReturnValue = "Input is not valid!";
-                    return serviceResponse;
+                    throw new SoapException();
                 }
                 
-                serviceResponse.ReturnValue = GetExchangeRate(fromCurrency, toCurrency, value).ToString();
+                serviceResponse.ReturnValue = GetExchangeRate(fromCurrency, toCurrency, value);
                 return serviceResponse;
             }
             catch (Exception)
             {
-                soapException = new SoapException("Wert konnte nicht umgerechnet werden.", SoapException.ClientFaultCode, "");
-                throw soapException;
+               /* soapException = new SoapException("Wert konnte nicht umgerechnet werden.", SoapException.ClientFaultCode, "");
+                throw soapException;*/
+               serviceResponse.ReturnValue = 0;
+               return serviceResponse;
             }
         }
 

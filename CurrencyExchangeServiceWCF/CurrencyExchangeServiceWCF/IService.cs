@@ -13,7 +13,7 @@ namespace CurrencyExchangeServiceWCF
     {
 
         [OperationContract]
-        Response<string> ConvertCurrency(ConvertCurrenyRequest req);
+        Response<float> ConvertCurrency(ConvertCurrenyRequest req);
 
         [OperationContract]
         Response<List<string>> GetCurrencyCodes(GetCurrencyCodesRequest req);
