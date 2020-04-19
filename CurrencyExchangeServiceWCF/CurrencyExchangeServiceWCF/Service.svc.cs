@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Security.Authentication;
 using System.Web.Services.Protocols;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -12,82 +14,55 @@ namespace CurrencyExchangeServiceWCF
     public class Service : IService
     {
         SoapException soapException ;
-        public Response<string> ConvertCurrency(ConvertCurrenyRequest req)
+        public Response<float> ConvertCurrency(ConvertCurrenyRequest req)
         {
+            Response<float> serviceResponse = new Response<float>();
             try
             {
-                Response<string> serviceResponse = new Response<string>();
+                
                 if (!req.autHeader.password.Equals("pa$$w0rd") || !req.autHeader.username.Equals("Admin")){
-                    serviceResponse.ReturnValue = "authentication not valid"; 
-                    return serviceResponse;
+                    throw new AuthenticationException("authentication not valid"); 
                 }
                 String toCurrency = req.toCurrency;
-                String value = req.ccValue;
+                String fromCurrency = req.fromCurrency;
+                float value = req.amount;
                 toCurrency = toCurrency.ToUpper();
 
                 string currencyInputPattern = @"^[a-zA-Z]{3}$";
-                string valueInputPattern = @"^[,.0-9]*$";
 
-                if (String.IsNullOrEmpty(value) || String.IsNullOrEmpty(toCurrency))
+                if (String.IsNullOrEmpty(toCurrency))
                 {
-                    serviceResponse.ReturnValue = "Input cannot be NULL!";
-                    return serviceResponse;
+                    throw new SoapException();
                 }
                 toCurrency = toCurrency.ToUpper();
 
 
                 bool isCurrencyValid = Regex.IsMatch(toCurrency, currencyInputPattern);
-                bool isValueValid = Regex.IsMatch(value, valueInputPattern);
 
-                if (!isCurrencyValid || !isValueValid)
+                if (!isCurrencyValid)
                 {
-                    serviceResponse.ReturnValue = "Input is not valid!";
-                    return serviceResponse;
+                    throw new SoapException();
                 }
-            
-                if (toCurrency.Equals("USD"))
-                {
-                    serviceResponse.ReturnValue = value;
-                    return serviceResponse;
-                }
-                if (toCurrency.Equals("EUR"))
-                    toCurrency = "USD";
-
-                if (!GetCurrencyCodes().Contains(toCurrency))
-                {
-                    soapException = new SoapException("Currency not available in the CurrencyConverter currencies list.", SoapException.ClientFaultCode, "");
-                    throw soapException;
-
-                }
-                if (String.IsNullOrEmpty(value))
-                {
-                    soapException = new SoapException("Wert darf nicht 0 sein.", SoapException.ClientFaultCode, "");
-                    throw soapException;
-                }
-
-                string conversionRateString = GetActualConversionRate(toCurrency);
-                double conversionRateDouble = Convert.ToDouble(conversionRateString);
-           
-                if (toCurrency.Equals("USD")) 
-                {
-                    value = (Convert.ToDouble(value) / conversionRateDouble).ToString();
-                }
-                else
-                {
-                    value = (Convert.ToDouble(value) * conversionRateDouble).ToString();
-                }
-                serviceResponse.ReturnValue = value;         
+                
+                serviceResponse.ReturnValue = GetExchangeRate(fromCurrency, toCurrency, value);
                 return serviceResponse;
             }
             catch (Exception)
             {
-                soapException = new SoapException("Wert konnte nicht umgerechnet werden.", SoapException.ClientFaultCode, "");
-                throw soapException;
+               /* soapException = new SoapException("Wert konnte nicht umgerechnet werden.", SoapException.ClientFaultCode, "");
+                throw soapException;*/
+               serviceResponse.ReturnValue = 0;
+               return serviceResponse;
             }
         }
 
-        private string GetActualConversionRate(string currency)
+        private float GetActualConversionRate(string currency)
         {
+            if (currency.ToLower() == "")
+                throw new ArgumentException("Invalid Argument! currency parameter cannot be empty!");
+            if (currency.ToLower() == "eur")
+                return 0;
+            
             string Url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
             XmlTextReader reader = new XmlTextReader(Url);
             string rate = "";
@@ -113,10 +88,51 @@ namespace CurrencyExchangeServiceWCF
                              
                 }
             }
-            rate = rate.Replace(".", ",");
-            return rate;
+            CultureInfo ci = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+            ci.NumberFormat.CurrencyDecimalSeparator = ".";
+            float exchangeRate = float.Parse(
+                rate,
+                NumberStyles.Any, 
+                ci);
+            return exchangeRate;
         }
 
+        
+        
+        public  float GetExchangeRate(string from, string to, float amount = 1)
+        {
+            // If currency's are empty abort
+            if (from == null || to == null)
+                return 0;
+
+            // Convert Euro to Euro
+            if (from.ToLower() == "eur" && to.ToLower() == "eur")
+                return amount;
+
+            try
+            {
+                // First Get the exchange rate of both currencies in euro
+                float toRate = GetActualConversionRate(to);
+                float fromRate = GetActualConversionRate(from); 
+                
+                // Convert Between Euro to Other Currency
+                if (from.ToLower() == "eur")
+                {
+                    return (amount * toRate);
+                }
+                else if (to.ToLower() == "eur")
+                {
+                    return (amount / fromRate);
+                }
+                else
+                {
+                    // Calculate non EURO exchange rates From A to B
+                    return (amount * toRate) / fromRate;
+                }
+            }
+            catch { return 0; }
+        }
+    
         public Response<List<string>> GetCurrencyCodes(GetCurrencyCodesRequest req)
         {
             Response<List<string>> serviceResponse = new Response<List<string>>();
