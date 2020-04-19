@@ -1,0 +1,262 @@
+[33mcommit 283945af5d03564f690921072784d422faa43cf5[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Eren Erdogan <t.eren.erdogan@hotmail.com>
+Date:   Sat Apr 18 11:20:18 2020 +0200
+
+    refactoring
+
+[1mdiff --git a/CurrencyExchangeServiceWCF/CurrencyExchangeServiceWCF/IService.cs b/CurrencyExchangeServiceWCF/CurrencyExchangeServiceWCF/IService.cs[m
+[1mindex 99d11d7..169aa5f 100644[m
+[1m--- a/CurrencyExchangeServiceWCF/CurrencyExchangeServiceWCF/IService.cs[m
+[1m+++ b/CurrencyExchangeServiceWCF/CurrencyExchangeServiceWCF/IService.cs[m
+[36m@@ -9,7 +9,7 @@[m [musing System.Text;[m
+ namespace CurrencyExchangeServiceWCF[m
+ {[m
+     [ServiceContract][m
+[31m-    public interface IService1[m
+[32m+[m[32m    public interface IService[m
+     {[m
+ [m
+         [OperationContract][m
+[1mdiff --git a/CurrencyExchangeServiceWCF/CurrencyExchangeServiceWCF/Service.svc.cs b/CurrencyExchangeServiceWCF/CurrencyExchangeServiceWCF/Service.svc.cs[m
+[1mindex 4beab1b..ae9242a 100644[m
+[1m--- a/CurrencyExchangeServiceWCF/CurrencyExchangeServiceWCF/Service.svc.cs[m
+[1m+++ b/CurrencyExchangeServiceWCF/CurrencyExchangeServiceWCF/Service.svc.cs[m
+[36m@@ -9,17 +9,17 @@[m [mnamespace CurrencyExchangeServiceWCF[m
+     //souce:        https://www.c-sharpcorner.com/blogs/message-contract-and-its-implementation[m
+     //              https://www.c-sharpcorner.com/UploadFile/788083/how-to-implement-message-contract-in-wcf/[m
+     //encription :  https://docs.microsoft.com/en-us/dotnet/framework/wcf/feature-details/using-message-contracts[m
+[31m-    public class Service1 : IService1[m
+[32m+[m[32m    public class Service : IService[m
+     {[m
+         SoapException soapException ;[m
+         public Response<string> ConvertCurrency(ConvertCurrenyRequest req)[m
+         {[m
+             try[m
+             {[m
+[31m-                Response<string> r = new Response<string>();[m
+[32m+[m[32m                Response<string> serviceResponse = new Response<string>();[m
+                 if (!req.autHeader.password.Equals("pa$$w0rd") || !req.autHeader.username.Equals("Admin")){[m
+[31m-                    r.ReturnValue = "authentication not valid"; [m
+[31m-                    return r;[m
+[32m+[m[32m                    serviceResponse.ReturnValue = "authentication not valid";[m[41m [m
+[32m+[m[32m                    return serviceResponse;[m
+                 }[m
+                 String toCurrency = req.toCurrency;[m
+                 String value = req.ccValue;[m
+[36m@@ -32,8 +32,8 @@[m [mnamespace CurrencyExchangeServiceWCF[m
+ [m
+                 if (String.IsNullOrEmpty(value) || String.IsNullOrEmpty(toCurrency))[m
+                 {[m
+[31m-                    r.ReturnValue = "Input cannot be NULL!";[m
+[31m-                    return r;[m
+[32m+[m[32m                    serviceResponse.ReturnValue = "Input cannot be NULL!";[m
+[32m+[m[32m                    return serviceResponse;[m
+                 }[m
+                 toCurrency = toCurrency.ToUpper();[m
+ [m
+[36m@@ -43,17 +43,14 @@[m [mnamespace CurrencyExchangeServiceWCF[m
+ [m
+                 if (!isCurrencyValid || !isValueValid)[m
+                 {[m
+[31m-                    r.ReturnValue = "Input cannot be NULL!";[m
+[31m-                    return r;[m
+[32m+[m[32m                    serviceResponse.ReturnValue = "Input cannot not valid!";[m
+[32m+[m[32m                    return serviceResponse;[m
+                 }[m
+[31m-[m
+[31m-                double ConversionRateDouble;[m
+[31m-                string ConversionRateString;[m
+             [m
+                 if (toCurrency.Equals("USD"))[m
+                 {[m
+[31m-                    r.ReturnValue = value;[m
+[31m-                    return r;[m
+[32m+[m[32m                    serviceResponse.ReturnValue = value;[m
+[32m+[m[32m                    return serviceResponse;[m
+                 }[m
+                 if (toCurrency.Equals("EUR"))[m
+                     toCurrency = "USD";[m
+[36m@@ -69,20 +66,20 @@[m [mnamespace CurrencyExchangeServiceWCF[m
+                     soapException = new SoapException("Wert darf nicht 0 sein.", SoapException.ClientFaultCode, "");[m
+                     throw soapException;[m
+                 }[m
+[31m-           [m
+[31m-                ConversionRateString = GetActualConversionRate(toCurrency);[m
+[31m-                ConversionRateDouble = Convert.ToDouble(ConversionRateString);[m
+[32m+[m
+[32m+[m[32m                string conversionRateString = GetActualConversionRate(toCurrency);[m
+[32m+[m[32m                double conversionRateDouble = Convert.ToDouble(conversionRateString);[m
+            [m
+                 if (toCurrency.Equals("USD")) [m
+                 {[m
+[31m-                    value = (Convert.ToDouble(value) / ConversionRateDouble).ToString();[m
+[32m+[m[32m                    value = (Convert.ToDouble(value) / conversionRateDouble).ToString();[m
+                 }[m
+                 else[m
+                 {[m
+[31m-                    value = (Convert.ToDouble(value) * ConversionRateDouble).ToString();[m
+[31m-                }           [m
+[31m-                r.ReturnValue = value;         [m
+[31m-                return r;[m
+[32m+[m[32m                    value = (Convert.ToDouble(value) * conversionRateDouble).ToString();[m
+[32m+[m[32m                }[m
+[32m+[m[32m                serviceResponse.ReturnValue = value;[m[41m         [m
+[32m+[m[32m                return serviceResponse;[m
+             }[m
+             catch (Exception)[m
+             {[m
+[36m@@ -124,23 +121,23 @@[m [mnamespace CurrencyExchangeServiceWCF[m
+ [m
+         public Response<List<string>> GetCurrencyCodes(GetCurrencyCodesRequest req)[m
+         {[m
+[31m-            Response<List<string>> r = new Response<List<string>>();[m
+[32m+[m[32m            Response<List<string>> serviceResponse = new Response<List<string>>();[m
+             if (!req.autHeader.password.Equals("pa$$w0rd") || !req.autHeader.username.Equals("Admin"))[m
+             {[m
+[31m-                r.ReturnValue = new List<string> {"authentication not valid"};[m
+[31m-                return r;[m
+[32m+[m[32m                serviceResponse.ReturnValue = new List<string> {"authentication not valid"};[m
+[32m+[m[32m                return serviceResponse;[m
+             }[m
+[31m-            r.ReturnValue = GetCurrencyCodes(); //delegate[m
+[31m-            return r;[m
+[32m+[m[32m            serviceResponse.ReturnValue = GetCurrencyCodes(); //delegate[m
+[32m+[m[32m            return serviceResponse;[m
+         }[m
+ [m
+         private List<string> GetCurrencyCodes()[m
+         {[m
+             try[m
+             {[m
+[31m-                List<string> CurrencyList = new List<string>();[m
+[31m-                string Url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";[m
+[31m-                XmlTextReader reader = new XmlTextReader(Url);[m
+[32m+[m[32m                List<string> currencyList = new List<string>();[m
+[32m+[m[32m                string url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";[m
+[32m+[m[32m                XmlTextReader reader = new XmlTextReader(url);[m
+                 while (reader.Read())[m
+                 {[m
+                     switch (reader.NodeType)[m
+[36m@@ -150,7 +147,7 @@[m [mnamespace CurrencyExchangeServiceWCF[m
+                             {// Read the attributes.[m
+                                 if (reader.Name.Equals("currency"))[m
+                                 {[m
+[31m-                                    CurrencyList.Add(reader.Value);[m
+[32m+[m[32m                                    currencyList.Add(reader.Value);[m
+                                 }[m
+                             }[m
+                             break;[m
+[36m@@ -160,7 +157,7 @@[m [mnamespace CurrencyExchangeServiceWCF[m
+                             break;[m
+                     }[m
+                 }[m
+[31m-                return CurrencyList;[m
+[32m+[m[32m                return currencyList;[m
+             }[m
+             catch (Exception)[m
+             {[m
+[1mdiff --git a/CurrencyExchangeServiceWCF/CurrencyExchangeServiceWCF/Web.config b/CurrencyExchangeServiceWCF/CurrencyExchangeServiceWCF/Web.config[m
+[1mindex 3598c0a..9fee196 100644[m
+[1m--- a/CurrencyExchangeServiceWCF/CurrencyExchangeServiceWCF/Web.config[m
+[1m+++ b/CurrencyExchangeServiceWCF/CurrencyExchangeServiceWCF/Web.config[m
+[36m@@ -1,67 +1,41 @@[m
+ ﻿<?xml version="1.0"?>[m
+ <configuration>[m
+ [m
+[31m-  <appSettings>[m
+[31m-    <add key="aspnet:UseTaskFriendlySynchronizationContext" value="true" />[m
+[31m-  </appSettings>[m
+[31m-  <system.web>[m
+[31m-    <compilation debug="true" targetFramework="4.7.2" />[m
+[31m-    <httpRuntime targetFramework="4.7.2"/>[m
+[31m-  </system.web>[m
+[31m-[m
+[31m-  <system.serviceModel>[m
+[31m-    <bindings>[m
+[31m-      <basicHttpBinding>[m
+[31m-        <binding name="Soap">[m
+[31m-          <security mode="Transport">[m
+[31m-            <transport clientCredentialType="None"/>[m
+[31m-          </security>[m
+[31m-        </binding>[m
+[31m-      </basicHttpBinding>[m
+[31m-    </bindings>[m
+[31m-[m
+[31m-    <client>[m
+[31m-      <endpoint address="http://localhost:50923/Service.svc/soap" [m
+[31m-                binding="basicHttpBinding"[m
+[31m-                bindingConfiguration="Soap" [m
+[31m-                contract="ServiceReference1.IService"[m
+[31m-                name="Soap" />[m
+[31m-    </client>[m
+[31m-[m
+[31m-    <services>[m
+[31m-      <service name="CurrencyExchangeServiceWCF.Service">[m
+[31m-        <endpoint address="soap" [m
+[31m-                  binding="basicHttpBinding" [m
+[31m-                  name="Soap" [m
+[31m-                  contract="CurrencyExchangeServiceWCF.IService" />[m
+[31m-      </service>[m
+[31m-    </services>[m
+[31m-[m
+[31m-    <behaviors>[m
+[31m-      <serviceBehaviors>[m
+[31m-        <behavior>[m
+[31m-          <!-- To avoid disclosing metadata information, set the values below to false before deployment -->[m
+[31m-          <serviceMetadata httpGetEnabled="false" httpsGetEnabled="true"/>[m
+[31m-          <!-- To receive exception details in faults for debugging purposes, set the value below to true.  Set to false before deployment to avoid disclosing exception information -->[m
+[31m-          <serviceDebug includeExceptionDetailInFaults="false"/>[m
+[31m-        </behavior>[m
+[31m-      </serviceBehaviors>[m
+[31m-    </behaviors>[m
+[31m-[m
+[31m-    <protocolMapping>[m
+[31m-      <add binding="basicHttpsBinding" scheme="https" />[m
+[31m-    </protocolMapping>[m
+[31m-[m
+[31m-    <serviceHostingEnvironment aspNetCompatibilityEnabled="true" multipleSiteBindingsEnabled="true" />[m
+[31m-  </system.serviceModel>[m
+[31m-[m
+[31m-  <system.webServer>[m
+[31m-    <modules runAllManagedModulesForAllRequests="true"/>[m
+[31m-    <!--[m
+[32m+[m	[32m<appSettings>[m
+[32m+[m		[32m<add key="aspnet:UseTaskFriendlySynchronizationContext" value="true" />[m
+[32m+[m	[32m</appSettings>[m
+[32m+[m	[32m<system.web>[m
+[32m+[m		[32m<compilation debug="true" targetFramework="4.7.2" />[m
+[32m+[m		[32m<httpRuntime targetFramework="4.7.2"/>[m
+[32m+[m	[32m</system.web>[m
+[32m+[m	[32m<system.serviceModel>[m
+[32m+[m		[32m<services>[m
+[32m+[m			[32m<service name="CurrencyExchangeServiceWCF.Service">[m
+[32m+[m				[32m<endpoint address="soap" binding="basicHttpBinding" name="soap" contract="CurrencyExchangeServiceWCF.IService"></endpoint>[m
+[32m+[m			[32m</service>[m
+[32m+[m		[32m</services>[m
+[32m+[m		[32m<behaviors>[m
+[32m+[m			[32m<serviceBehaviors>[m
+[32m+[m				[32m<behavior>[m
+[32m+[m					[32m<!-- To avoid disclosing metadata information, set the values below to false before deployment -->[m
+[32m+[m					[32m<serviceMetadata httpGetEnabled="true" httpsGetEnabled="true"/>[m
+[32m+[m					[32m<!-- To receive exception details in faults for debugging purposes, set the value below to true.  Set to false before deployment to avoid disclosing exception information -->[m
+[32m+[m					[32m<serviceDebug includeExceptionDetailInFaults="true"/>[m
+[32m+[m				[32m</behavior>[m
+[32m+[m			[32m</serviceBehaviors>[m
+[32m+[m		[32m</behaviors>[m
+[32m+[m		[32m<protocolMapping>[m
+[32m+[m			[32m<add binding="basicHttpsBinding" scheme="https" />[m
+[32m+[m		[32m</protocolMapping>[m
+[32m+[m		[32m<serviceHostingEnvironment aspNetCompatibilityEnabled="true" multipleSiteBindingsEnabled="true" />[m
+[32m+[m	[32m</system.serviceModel>[m
+[32m+[m	[32m<system.webServer>[m
+[32m+[m		[32m<modules runAllManagedModulesForAllRequests="true"/>[m
+[32m+[m		[32m<!--[m
+         To browse web app root directory during debugging, set the value below to true.[m
+         Set to false before deployment to avoid disclosing web app folder information.[m
+       -->[m
+[31m-    <directoryBrowse enabled="true"/>[m
+[31m-  </system.webServer>[m
+[32m+[m		[32m<directoryBrowse enabled="true"/>[m
+[32m+[m	[32m</system.webServer>[m
+ [m
+ </configuration>[m

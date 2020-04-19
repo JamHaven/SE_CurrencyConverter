@@ -38,7 +38,7 @@ namespace CurrencyExchangeServiceWCF
     }
     
     /**
-     * The return value can use for e
+     * The return value can use for service response for any type of var
      */
     [MessageContract]
     public class Response<T>
