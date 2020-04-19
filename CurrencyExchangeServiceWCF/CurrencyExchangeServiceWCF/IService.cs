@@ -13,7 +13,7 @@ namespace CurrencyExchangeServiceWCF
     {
 
         [OperationContract]
-        Response<string> ConvertCurrency(ConvertCurrenyRequest req);
+        Response<float> ConvertCurrency(ConvertCurrenyRequest req);
 
         [OperationContract]
         Response<List<string>> GetCurrencyCodes(GetCurrencyCodesRequest req);
@@ -28,7 +28,9 @@ namespace CurrencyExchangeServiceWCF
         [MessageBodyMember]
         public string toCurrency { get; set; }
         [MessageBodyMember]
-        public string ccValue { get; set; }
+        public string fromCurrency { get; set; }
+        [MessageBodyMember]
+        public float amount { get; set; }
     }
     [MessageContract]
     public class GetCurrencyCodesRequest 
