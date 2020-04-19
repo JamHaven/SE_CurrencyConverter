@@ -28,7 +28,9 @@ namespace CurrencyExchangeServiceWCF
         [MessageBodyMember]
         public string toCurrency { get; set; }
         [MessageBodyMember]
-        public string ccValue { get; set; }
+        public string fromCurrency { get; set; }
+        [MessageBodyMember]
+        public float amount { get; set; }
     }
     [MessageContract]
     public class GetCurrencyCodesRequest 
